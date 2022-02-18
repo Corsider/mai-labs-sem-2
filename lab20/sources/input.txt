@@ -1,0 +1,15 @@
+Greg:5:0
+Greg:3:1
+Flin:3:1
+Greg:4:1
+Sam:5:0
+Greg:3:1
+Flin:5:1
+Flin:5:1
+Sam:4:1
+Vic:4:1
+Greg:5:0
+Flin:2:0
+Greg:4:1
+Vic:5:1
+Flin:3:1
