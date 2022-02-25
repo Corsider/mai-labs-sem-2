@@ -4,7 +4,7 @@ delcount=0
 list=""
 del="n"
 
-if [ "$1" = "?" ]
+if [ "$1" = ? ]
 then
     echo Script is used to delete files with specified prefix 
     echo if their length is in specified range. Syntax:
