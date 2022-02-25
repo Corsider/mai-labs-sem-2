@@ -1,0 +1,46 @@
+#! /bin/bash
+
+delcount=0
+list=""
+del="n"
+
+if [ "$1" = "?" ]
+then
+    echo Script is used to delete files with specified prefix 
+    echo if their length is in specified range. Syntax:
+    echo ./script [? IF INFO NEEDED] [FULL PATH TO FILES] [PREFIX] [MIN_LENGTH] [MAX_LENGTH]
+else
+    for var in `ls $1 | grep "$2[a-zA-Z0-9]"`
+    do
+        count=`wc -m < $1$var`
+        if (( "$count" >= "$3" ))&&(( "$count" <= "$4"))
+        then
+            #rm $1$var
+            #echo File \"$var\" is deleted.
+            let delcount++
+            list="$list $var"
+        fi
+    done
+    if (( "$delcount" > 0 ))
+    then
+        echo $delcount file\(s\) will be deleted. Are you sure? \(y, n\)
+        read del
+        if [ "$del" = "y" ] || [ "$del" = "Y" ]
+        then
+            for var in $list
+            do
+                rm $1$var
+            done
+        else
+            echo Discarded.
+            delcount=0
+        fi
+    else
+        echo No files matching filters found.
+    fi
+    if (( $delcount > 0 ))
+    then
+        echo Script finished processing files in $1
+        echo $delcount file\(s\) were deleted.
+    fi
+fi
