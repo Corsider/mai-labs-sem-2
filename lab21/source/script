@@ -10,13 +10,11 @@ then
     echo if their length is in specified range. Syntax:
     echo ./script [? IF INFO NEEDED] [FULL PATH TO FILES] [PREFIX] [MIN_LENGTH] [MAX_LENGTH]
 else
-    for var in `ls $1 | grep "$2[a-zA-Z0-9]"`
+    for var in `ls $1 | grep "$2[a-zA-Z0-9.]"`
     do
         count=`wc -m < $1$var`
-        if (( "$count" >= "$3" ))&&(( "$count" <= "$4"))
+        if (( "$count" >= "$3" )) && (( "$count" <= "$4"))
         then
-            #rm $1$var
-            #echo File \"$var\" is deleted.
             let delcount++
             list="$list $var"
         fi
@@ -44,3 +42,4 @@ else
         echo $delcount file\(s\) were deleted.
     fi
 fi
+
