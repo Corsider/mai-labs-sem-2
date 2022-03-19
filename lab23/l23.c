@@ -147,7 +147,7 @@ void remove_node(node *n, int key) {
 }
 
 int tree_power(node *n, int max) {
-    //printf("%s %d %s %d\n", "I recieved MAX", max, "node", n->key);
+    //printf("%s %d %s %d\n", "recieved MAX", max, "node", n->key);
     int k = n->count;
     
     if (k > max) {
@@ -177,28 +177,28 @@ int nodes_with_max_power(node *n, int max, int k) {
     return k;
 }
 
+int get_start(node *n) {
+    return n->key;
+}
+
 int main(void)
 {
     //making tree
-    int start = 32;
-    node *n = make_node(start);
-    add_node(n, 32, 31);
-    add_node(n, 32, 30);
-    add_node(n, 32, 29);
-    add_node(n, 30, 28);
-    add_node(n, 30, 27);
-    add_node(n, 28, 26);
-    add_node(n, 28, 25);
-    add_node(n, 31, 24);
-    add_node(n, 28, 1);
+    node *n = NULL;
     
     //MENU
     int cont = 0;
     int tp;
-    while (cont < 6) {
+    int treeExists = 0;
+    while (1) {
         //loop
+        int start;
+        int tp;
+        if (treeExists == 1) {
+            tp = tree_power(n, 0);
+            start = get_start(n);
+        }
         
-        tp = tree_power(n, 0);
         printf("%s\n", "What do you want to do?");
         printf("%s\n", "1) Add new node");
         printf("%s\n", "2) Print tree");
@@ -207,16 +207,41 @@ int main(void)
         printf("%s\n", "5) Number of nodes, power of which is equal to tree's power");
         printf("%s\n", "6) Exit");
         printf("%s", "Decide. ");
+        //char c;
+        //scanf("%c", &c);
+        /*
+        if ((c != '\n') && (c >= '0' && c <= '9')) {
+            cont = c - 48;
+        } else {
+            printf("Your input is incorrect\n\n");
+            continue;
+        }
+        */
         scanf("%d", &cont);
+
         printf("\n");
 
         if (cont == 1) {
             int parent;
             int val;
             printf("%s\n", "Adding new node. Which one?");
-            printf("%s\n", "Enter parent node and new node's key value ([PARENT] [VALUE]):");
-            scanf("%d %d", &parent, &val);
+            if (treeExists == 1) {
+                printf("%s\n", "Enter parent node and new node's key value ([PARENT] [VALUE]):");
+                scanf("%d %d", &parent, &val);
+            } else {
+                printf("%s\n", "Enter parent node:");
+                scanf("%d", &val);
+            }
             printf("\n");
+            if (treeExists == 0) {
+                n = make_node(val);
+                treeExists = 1;
+                printf("%s\n", "Added. Now tree looks like this:");
+                printf("\n");
+                print_tree(n);
+                printf("\n");
+                continue;
+            }
             if (find_node(n, parent)) {
                 if (find_node(n, val)) {
                     printf("%s\n", "This key already exists");
@@ -225,6 +250,7 @@ int main(void)
                     printf("%s\n", "Added. Now tree looks like this:");
                     printf("\n");
                     print_tree(n);
+                    treeExists = 1;
                 }
             } else {
                 printf("%s\n", "No such parent was found");
@@ -233,9 +259,18 @@ int main(void)
         } else if (cont == 2) {
             printf("%s\n", "Printing tree...");
             printf("\n");
-            print_tree(n);
+            if (treeExists == 1) {
+                print_tree(n);
+            } else {
+                printf("Tree is empty\n");
+            }
             printf("\n");
         } else if (cont == 3) {
+            if (treeExists == 0) {
+                printf("Tree is empty\n");
+                printf("\n");
+                continue;
+            }
             int kkey;
             printf("%s\n", "Which node and it's children to print?");
             scanf("%d", &kkey);
@@ -248,6 +283,11 @@ int main(void)
             printf("\n");
         } else if (cont == 4) {
             int dkey;
+            if (treeExists == 0) {
+                printf("Tree is empty\n");
+                printf("\n");
+                continue;
+            }
             printf("%s\n", "Select node's key to delete");
             scanf("%d", &dkey);
             printf("\n");
@@ -257,19 +297,30 @@ int main(void)
                 printf("\n");
                 print_tree(n);
             } else if (dkey == start) {
-                printf("%s\n", "Can't delete root node");
+                free_node(n);
+                treeExists = 0;
+                printf("%s\n", "Tree was deleted");
             } else {
                 printf("%s\n", "No node with such key was found");
             }
             printf("\n");
         } else if (cont == 5) {
+            if (treeExists == 0) {
+                printf("Tree is empty\n");
+                printf("\n");
+                continue;
+            }
             int k = 0;
             int np = nodes_with_max_power(n, tp, 0);
             printf("%s %d\n", "Nodes with tree's power:", np);
             printf("\n");
+        } else if (cont == 6) {
+            break;
         }
     }
-
-    free_node(n);
+    if (treeExists == 1) {
+        free_node(n);
+    }
+    
     return 0;
 }
