@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
 
 typedef struct node {
     struct node ** children;
@@ -181,19 +183,37 @@ int get_start(node *n) {
     return n->key;
 }
 
+int check(char *c) {
+    while (*c) {
+        if ((*c < '0' || *c > '9') && (*c != '-') && (*c != '.')) {
+            return 0;
+        }
+        *c++;
+    }
+    return 1;
+}
+
+void throw_error() {
+    printf("\n");
+    printf("%s\n", "ERROR - invalid input");
+    printf("\n");
+    //scanf("%*[^\n]");
+}
+
 int main(void)
 {
     //making tree
     node *n = NULL;
     
     //MENU
-    int cont = 0;
+    //int cont = 0;
     int tp;
     int treeExists = 0;
     while (1) {
         //loop
         int start;
         int tp;
+        int cont = 0;
         if (treeExists == 1) {
             tp = tree_power(n, 0);
             start = get_start(n);
@@ -207,7 +227,7 @@ int main(void)
         printf("%s\n", "5) Number of nodes, power of which is equal to tree's power");
         printf("%s\n", "6) Exit");
         printf("%s", "Decide. ");
-        //char c;
+        char c[100] = "";
         //scanf("%c", &c);
         /*
         if ((c != '\n') && (c >= '0' && c <= '9')) {
@@ -217,20 +237,66 @@ int main(void)
             continue;
         }
         */
-        scanf("%d", &cont);
+       /*
+        int ok = scanf("%d", &cont);
+        if (!ok) {
+            printf("\n");
+            printf("Invalid input!\n");
+            continue;
+        }
+       */
+        //fgets(c, 100, stdin);
+        //sscanf(c, "%d", &cont);
+        //if (check_str(c) == 0) {
+        //    printf("%s\n", "BAAD");
+        //    continue;
+        //}
+        //int error;
+        scanf("%s", c);
+        if (!check(c)) {
+            throw_error();
+            continue;
+        }
+        //cont = atoi(c);
+
+        /*
+        int error = scanf("%d", &cont);
+        if (error != 1) {
+            throw_error();
+            continue;
+        }
+        */
 
         printf("\n");
-
-        if (cont == 1) {
-            int parent;
-            int val;
+        
+        if (!strcmp(c, "1")) {
+            int parent = 0;
+            int val = 0;
             printf("%s\n", "Adding new node. Which one?");
             if (treeExists == 1) {
-                printf("%s\n", "Enter parent node and new node's key value ([PARENT] [VALUE]):");
-                scanf("%d %d", &parent, &val);
+                printf("%s\n", "Enter parent node and new node's key value");
+                printf("%s", "PARENT ");
+                scanf("%s", c);
+                if (!check(c)) {
+                    throw_error();
+                    continue;
+                }
+                parent = atoi(c);
+                printf("%s", "VALUE ");
+                scanf("%s", c);
+                if (!check(c)) {
+                    throw_error();
+                    continue;
+                }
+                val = atoi(c);
             } else {
                 printf("%s\n", "Enter parent node:");
-                scanf("%d", &val);
+                scanf("%s", c);
+                if (!check(c)) {
+                    throw_error();
+                    continue;
+                }
+                val = atoi(c);
             }
             printf("\n");
             if (treeExists == 0) {
@@ -256,7 +322,7 @@ int main(void)
                 printf("%s\n", "No such parent was found");
             }
             printf("\n");
-        } else if (cont == 2) {
+        } else if (!strcmp(c, "2")) {
             printf("%s\n", "Printing tree...");
             printf("\n");
             if (treeExists == 1) {
@@ -265,7 +331,7 @@ int main(void)
                 printf("Tree is empty\n");
             }
             printf("\n");
-        } else if (cont == 3) {
+        } else if (!strcmp(c, "3")) {
             if (treeExists == 0) {
                 printf("Tree is empty\n");
                 printf("\n");
@@ -273,7 +339,12 @@ int main(void)
             }
             int kkey;
             printf("%s\n", "Which node and it's children to print?");
-            scanf("%d", &kkey);
+            scanf("%s", c);
+            if (!check(c)) {
+                throw_error();
+                continue;
+            }
+            kkey = atoi(c);
             printf("\n");
             if (find_node(n, kkey)) {
                 print_node(find_node(n, kkey), 0);
@@ -281,7 +352,7 @@ int main(void)
                 printf("%s\n", "No such node was found");
             }
             printf("\n");
-        } else if (cont == 4) {
+        } else if (!strcmp(c, "4")) {
             int dkey;
             if (treeExists == 0) {
                 printf("Tree is empty\n");
@@ -289,7 +360,12 @@ int main(void)
                 continue;
             }
             printf("%s\n", "Select node's key to delete");
-            scanf("%d", &dkey);
+            scanf("%s", c);
+            if (!check(c)) {
+                throw_error();
+                continue;
+            }
+            dkey = atoi(c);
             printf("\n");
             if (find_node(n, dkey) && dkey != start) {
                 remove_node(n, dkey);
@@ -304,7 +380,7 @@ int main(void)
                 printf("%s\n", "No node with such key was found");
             }
             printf("\n");
-        } else if (cont == 5) {
+        } else if (!strcmp(c, "5")) {
             if (treeExists == 0) {
                 printf("Tree is empty\n");
                 printf("\n");
@@ -314,8 +390,11 @@ int main(void)
             int np = nodes_with_max_power(n, tp, 0);
             printf("%s %d\n", "Nodes with tree's power:", np);
             printf("\n");
-        } else if (cont == 6) {
+        } else if (!strcmp(c, "6")) {
             break;
+        } else {
+            printf("%s", "No such option\n");
+            printf("\n");
         }
     }
     if (treeExists == 1) {
