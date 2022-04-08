@@ -19,5 +19,6 @@ typedef struct _abiturient {
 
 void write_to_data(abiturient *abit, FILE *f);
 void read_data(abiturient *abit, FILE *f);
+void print_abits(abiturient saved[ABITCOUNT], int count);
 
 #endif
