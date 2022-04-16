@@ -55,12 +55,12 @@ void freeDeque(Deque *deq) {
     while (deq->top != deq->bot) {
         Dequenode *nod = deq->top;
         deq->top = deq->top->next;
-        deq->top->prev = 0;
+        deq->top->prev = 0; //0
         free(nod);
     }
-    deq->bot = deq->top = 0;
-    deq->count = 0;
-    free(deq);
+    deq->top = deq->bot = 0; //0
+    deq->count = 0;//0
+    //free(deq);
 }
 
 void *push_back(Deque *deq, int item) {
@@ -82,10 +82,11 @@ void *pop_front(Deque *deq) {
         deq->top = n->next;
         deq->top->prev = NULL;
         deq->count--;
-    } else if (isEmpty(deq) && deq->count != 1){
+    } else if (!isEmpty(deq) && deq->count == 1){
         deq->bot = deq->top = NULL;
-    } else {
         freeDeque(deq);
+    } else {
+        //freeDeque(deq);...
     }
     free(n);
 }
@@ -96,11 +97,12 @@ void *pop_back(Deque *deq) {
         deq->bot = n->prev;
         deq->bot->next = NULL;
         deq->count--;
-    } else if (isEmpty(deq) && deq->count != 1) {
+    } else if (!isEmpty(deq) && deq->count == 1) {
         deq->top = deq->bot = NULL;
-    } else {
         freeDeque(deq);
-    }//TODO
+    } else {
+        //...
+    }
     free(n);
 }
 

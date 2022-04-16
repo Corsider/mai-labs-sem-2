@@ -13,6 +13,12 @@ main.o: $(HD)
 deque.o: $(HD)
 	$(CC) $(CCFLAGS) -c deque.c
 
+#do: $(SRC)
+#	$(CC) $(CCFLAGS) -c $^
+
+#%.o: %.c
+#	$(CC) $(CCFLAGS) $^ -c $@
+
 pre:
 	$(CC) -c $(SRC)
 
