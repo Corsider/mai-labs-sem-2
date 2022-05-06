@@ -22,12 +22,18 @@ int check(char *c) {
 int main(void)
 {
     int matrixFilled = 0;
-    Matrix *mat = create_matrix(10);
+    //Matrix *mat = create_matrix(10);
     //fill_matrix(mat);
     //print_matrix(mat, 0);
-    int matrixSize;
+    char matrixSize[4] = "";
     printf("Specify matrix size: ");
-    scanf("%d", &matrixSize);
+    scanf("%s", matrixSize);
+    printf("\n");
+    if (!check(matrixSize)) {
+        throw_error();
+        exit(1);
+    }
+    Matrix *mat = create_matrix(atoi(matrixSize));
 
     while (1) {
         printf("%s\n", "What do you want to do?");
@@ -44,13 +50,13 @@ int main(void)
         }
         
         if (!strcmp(c, "1")) {
-            int value;
+            delete_matrix(mat);
+            Matrix *mat = create_matrix(atoi(matrixSize));
             printf("\nReading data.txt ...\n\n");
             if (fill_matrix(mat) == 1) {
                 matrixFilled = 1;
             } else {
-                printf("No such file. Please create data.txt file with your matrix.\n");
-                //break;
+                printf("No such file. Please create data.txt file with your matrix.\n\n");
             }
         } else if (!strcmp(c, "2")) {
             if (matrixFilled == 0) {

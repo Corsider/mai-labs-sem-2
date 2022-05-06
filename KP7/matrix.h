@@ -8,7 +8,7 @@ typedef struct _Matrix_ {
     int a_knots_count;
     int M[MATRIX_SIZE];
     double A[MATRIX_SIZE];
-    int rows[MATRIX_SIZE];
+    //int rows[MATRIX_SIZE];
 } Matrix;
 
 Matrix *create_matrix(int size);
