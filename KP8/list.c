@@ -19,6 +19,15 @@ Iterator next(Iterator *i) {
     return ii;
 }
 
+Iterator prevOLD(List *ls, Iterator *i) {
+    Iterator ii = first(ls);
+    Iterator nii = next(&ii);
+    for (Iterator k = nii; k.part != i->part; k = next(&k)) {
+        ii = k;
+    }
+    return ii;
+}
+
 Iterator prev(List *ls, Iterator *i) {
     Iterator ii;
     for (Iterator j = first(ls); j.part != i->part; j = next(&j)) {
@@ -26,6 +35,8 @@ Iterator prev(List *ls, Iterator *i) {
     }
     return ii;
 }
+
+
 
 Iterator first(List *ls) {
     Iterator i = {ls->start};
@@ -35,6 +46,14 @@ Iterator first(List *ls) {
 Iterator end(List *ls) {
     Iterator i;
     i.part = ls->start;
+    return i;
+}
+
+Iterator pre_end(List *ls) {
+    Iterator i;
+    for (Iterator j = first(ls); j.part->next != ls->start; j = next(&j)) {
+        i = j;
+    }
     return i;
 }
 
@@ -72,6 +91,12 @@ Iterator delete(List *ls, Iterator *i) {
         ls->start = t;
         Iterator res = {ls->start};
         ls->size--;
+        //update ptrs to first elem from last ...
+        Iterator last = end(ls);
+        Iterator pre_last = prev(ls, &last);
+        //printf("Last elem needs adj ptrs. elem: %s\n", pre_last.part->str);
+        pre_last.part->next = res.part;
+        printf("updated. elem %s to elem %s\n", end(ls).part->str, first(ls).part->str);
         return res;
     } else {
         Iterator prv = prev(ls, i); // getting previous
@@ -105,13 +130,29 @@ Iterator find(List *ls, char *data) {
     }
     Iterator ed = end(ls);
     Iterator pre = prev(ls, &ed);
-    printf("pre-last elem is %s\n", pre.part->str);
+    //Iterator pre = pre_end(ls);
+    //printf("pre-last elem is %s\n", pre.part->str);
+    //printf("Started comparing. first: %s last(pre): %s\n", first(ls).part->str, pre.part->str);
     for (Iterator i = first(ls); i.part != pre.part; i = next(&i)) {
-        //printf("comparing %s and %s ...\n", i.part->str, data);
+        //printf("comparing %s and %s, flag %s ...\n", i.part->str, data, pre.part->str);
         if (!strcmp(i.part->str, data)) {
             result = i;
             break;
         }
+        /*
+        int cont;
+        scanf("%d", &cont);
+        if (cont == 1) {
+            continue;
+        } else {
+            break;
+        }
+        */
+    }
+    //check last elem
+    if (!strcmp(pre.part->str, data)) {
+        //printf("Here\n");
+        result = pre;
     }
     return result;
 }
