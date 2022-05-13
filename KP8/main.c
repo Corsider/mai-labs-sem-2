@@ -41,6 +41,14 @@ int main(void)
     List *list = list_create("empty");
     int list_created = 0;
 
+    /////////////////////////////////////////////////
+    //
+    //
+    //    TODO: MAKE LIST CIRCLE! NOT SETTING NULLS TO ->next;
+    //
+    //
+    /////////////////////////////////////////
+
     while (1) {
         printf("%s\n", "What do you want to do?");
         printf("%s\n", "1) Print list");
