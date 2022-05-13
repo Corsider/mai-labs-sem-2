@@ -21,33 +21,8 @@ int check(char *c) {
 
 int main(void)
 {
-    /*
-    List *test = list_create("hello");
-    list_print(test);
-    list_add(test, "world");
-    list_add(test->next, "team");
-    list_add(test, "rt");
-    list_print(test);
-    //list_print(test->next->next->next->next);
-    printf("%d\n", list_length(test));
-    list_remove(test, test->next);
-    list_print(test);
-    printf("lengh/..\n");
-    printf("%d\n", list_length(test));
-    printf("----\n");
-    list_function(test, "f");
-    list_destroy(test);
-    */
-    List *list = list_create("empty");
+    List *list = list_create();
     int list_created = 0;
-
-    /////////////////////////////////////////////////
-    //
-    //
-    //    TODO: MAKE LIST CIRCLE! NOT SETTING NULLS TO ->next;
-    //
-    //
-    /////////////////////////////////////////
 
     while (1) {
         printf("%s\n", "What do you want to do?");
@@ -57,81 +32,78 @@ int main(void)
         printf("%s\n", "4) Function");
         printf("%s\n", "5) Exit");
         printf("%s", "? - ");
-        char c[100] = "";
-        char c1[100];
-        scanf("%s", c);
-        //fgets(c, 100, stdin);
-        //printf("atoied %d\n", atoi(c));
-        //if (!check(c)) {
-        //    throw_error();
-        //    continue;
-        //}
         
-        if (atoi(c) == 1) {
-            list_print(list);
-            printf("\n");
-            /*
+        Iterator it;
+        char c[STRING_SIZE];
+        scanf("%s", c);
+        
+        if (atoi(c) == 1) { //////PRINT
+            
             if (list_created) {
                 printf("\nPrinting list...\n\n");
                 list_print(list);
+                printf("\n");
             } else {
                 printf("\nList is empty\n\n");
             }
-            */
-        } else if (atoi(c) == 2) {
+            
+        } else if (atoi(c) == 2) { /////ADD
             if (list_created) {
-                printf("\nWhich one: ");
-                scanf("%s", c1);
-                list_add(list, c1);
-                printf("\nAdded.\n");
-                list_print(list);
-                printf("\n");
+                printf("\nAfter which one: ");
+                scanf("%s", c);
+                Iterator parent = find(list, c);
+                if (parent.part != NULL) {
+                    printf("String: ");
+                    scanf("%s", c);
+                    insert(list, &parent, c);
+                    printf("Inserted. Printing list...\n\n");
+                    list_print(list);
+                    printf("\n");
+                } else {
+                    printf("No such element.\n\n");
+                }
             } else {
                 printf("\nCreate root elem: ");
-                scanf("%s", c1);
-                //fgets(c1, 100, stdin);
-                //list_destroy(list);
-                //printf("Qurrent data was %s\n", list->data);
-                //list->data = c1;
-                //list->next = list;
-                list_add(list, c1);
-                list_remove(list, "empty");
-                //printf("and now %s\n", list->data);
+                scanf("%s", c);
+                it = push_back(list, c);
                 printf("Created.\n\n");
                 list_created = 1;
                 list_print(list);
                 printf("\n");
             }
-        } else if (atoi(c) == 3) {
+        } else if (atoi(c) == 3) { //////REMOVE
             if (list_created) {
                 printf("Which one: ");
                 scanf("%s", c);
                 //check if exists
-                if (list_find(list, c)) {
+                Iterator dl = find(list, c);
+                if (dl.part != NULL) {
                     if (list_length(list) == 1) {
-                        //list_destroy(list);
+                        list_destroy(list);
+                        printf("List was deleted.\n\n");
                         list_created = 0;
-                        list->data = "empty";
-                        printf("List was destroyed.\n\n");
                     } else {
-                        list_remove(list, c);
-                        printf("Removed.\n");
+                        delete(list, &dl);
+                        printf("Deleted.\n\n");
                         list_print(list);
                         printf("\n");
                     }
                 } else {
                     printf("No such element.\n\n");
                 }
-                
             } else {
                 printf("\nList wasn't created.\n\n");
             }
-        } else if (atoi(c) == 4) {
+        } else if (atoi(c) == 4) { /////FUNCTION
             if (list_created) {
                 printf("Which one: ");
                 scanf("%s", c);
                 printf("\nExecuting function...\n\n");
-                list_function(list, c);
+                //if (list_length(l))
+                if (list_function(list, c)) {
+                    list_created = 0;
+                }
+                //if (list_length)
             } else {
                 printf("\nList is empty.\n\n");
             }

@@ -33,7 +33,8 @@ Iterator first(List *ls) {
 }
 
 Iterator end(List *ls) {
-    Iterator i = {NULL};
+    Iterator i;
+    i.part = ls->start;
     return i;
 }
 
@@ -45,9 +46,9 @@ Iterator last(List *ls) {
     return i;
 }
 
-char *get_data(Iterator *i) {
-    return i->part->str;
-}
+//char *get_data(Iterator *i) {
+//    return i->part->str;
+//}
 
 Iterator insert(List *ls, Iterator *i, char *data) {
     Iterator toPaste = {(struct Item *) malloc(sizeof(struct Item))};
@@ -55,7 +56,7 @@ Iterator insert(List *ls, Iterator *i, char *data) {
     ls->size++;
     if (i->part == NULL) {
         ls->start = toPaste.part;
-        ls->start->next = NULL;
+        ls->start->next = ls->start; //changed
         return toPaste;
     } else {
         toPaste.part->next = i->part->next;
@@ -87,104 +88,75 @@ Iterator push_back(List *ls, char *data) {
     ls->size++;
     if (ls->start == NULL) {
         ls->start = temp.part;
-        ls->start->next = NULL;
+        ls->start->next = ls->start; //changed
         return temp;
     } else {
-        temp.part->next = NULL;
+        temp.part->next = ls->start; //changed
         last(ls).part->next = temp.part; // inserting after last iter
         return temp;
     }
 }
-/*
-int list_length_int(List *ls, char *startC, int start) {
-    start++;
-    if (ls->next->data != startC) {
-        list_length_int(ls->next, startC, start);
-    }
-    return start;
-}
-*/
-/*
-int list_length(List *ls) {
-    //int *x = 0;
-    //list_length_int(ls, x);
-    //return list_length_int(ls, ls->data, 0);
-    int res = 0;
-    char *check = ls->data;
-    List *qurrent = ls;
-    while (qurrent->next->data != check) {
-        res++;
-        qurrent = qurrent->next;
-    }
-    return res+1;
-}
 
-void list_print_internal(List *ls, char *start) {
-    printf("%s ", ls->data);
-    if (ls->next->data != start) {
-        list_print_internal(ls->next, start);
+Iterator find(List *ls, char *data) {
+    Iterator result = {NULL};
+    //printf("start is %s\n", ls->start->str);
+    if (!strcmp(ls->start->str, data)) {
+        return first(ls);
     }
+    Iterator ed = end(ls);
+    Iterator pre = prev(ls, &ed);
+    printf("pre-last elem is %s\n", pre.part->str);
+    for (Iterator i = first(ls); i.part != pre.part; i = next(&i)) {
+        //printf("comparing %s and %s ...\n", i.part->str, data);
+        if (!strcmp(i.part->str, data)) {
+            result = i;
+            break;
+        }
+    }
+    return result;
 }
 
 void list_print(List *ls) {
-    printf("[INT] Recieved list->data = %s\n", ls->data);
-    list_print_internal(ls, ls->data);
+    if (list_length(ls) > 0) {
+        printf("%s ", ls->start->str);
+        Iterator j = first(ls);
+        for (Iterator i = next(&j); i.part != end(ls).part; i = next(&i)) {
+            printf("%s ", i.part->str);
+        }
+    }
+    
     printf("\n");
 }
 
-void list_add(List *ls, char *elem) {
-    List *knot = list_create(elem);
-    List *buffer = ls->next;
-    ls->next = knot;
-    knot->next = buffer;
+void lsp(List *ls, char *start) {
+    printf("%s ", ls->start->str);
+    if (ls->start->next->str != start) {
+        lsp(ls, start);
+    }
 }
 
-void list_remove(List *ls, char *elem) {
-    List *t = ls;
-    while (t->next->data != elem) {
-        t = t->next;
-    }
-    List *after = t->next->next;
-    t->next = after;
-    //list_destroy(elem);
-}
-
-void list_function(List *ls, char *elem) {
-    List *t = ls;
-    int found = 0;
-    while (t->next->data != ls->data) {
-        if (t->data == elem) {
-            found = 1;
-            break;
-        }
-        t = t->next;
-    }
-    if (found) {
-        printf("Found this element. Deleting list...\n");
+int list_function(List *ls, char *elem) {
+    Iterator i = find(ls, elem);
+    if (i.part != NULL) {
+        printf("Found %s in list. Deleting list...\n", elem);
         list_destroy(ls);
-    } else {
-        printf("Nothing.\n");
-    }
-}
-
-int list_find(List *ls, char *elem) {
-    List *t = ls;
-    int found = 0;
-    while (t->next->data != ls->data) {
-        if (t->data == elem) {
-            found = 1;
-            break;
-        }
-        t = t->next;
-    }
-    if (found) {
+        printf("\n");
         return 1;
     } else {
+        printf("No such element was found.\n\n");
         return 0;
     }
 }
-*/
+
+int list_length(List *ls) {
+    return ls->size;
+}
+
+
 void list_destroy(List *ls) {
-    free(ls);
-    ls = NULL;
+    Iterator i = first(ls);
+    while (list_length(ls) != 0) {
+        i = delete(ls, &i);
+    }
+    ls->size = 0;
 }
