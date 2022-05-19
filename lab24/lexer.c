@@ -103,8 +103,7 @@ Vector *v_create() {
     Vector *new = (Vector *) malloc(sizeof(Vector));
     new->count = 0;
     new->max = VECTOR_BASE_CAPACITY;
-    new->tokens = malloc(sizeof(Token) * 256);
-    //new->tokens = NULL;
+    new->tokens = malloc(sizeof(Token) * VECTOR_BASE_CAPACITY);
     return new;
 }
 
