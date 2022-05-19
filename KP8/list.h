@@ -1,6 +1,8 @@
 #ifndef LIST_H
 #define LIST_H
 
+//#include <stdbool.h>
+
 #define STRING_SIZE 100
 
 typedef struct Item {
@@ -13,10 +15,8 @@ typedef struct Iterator {
 } Iterator;
 
 typedef struct List {
-    //char data[STRING_SIZE];
     struct Item *start;
     int size;
-    //struct List *next;
 } List;
 
 Iterator next(Iterator *i);
@@ -27,15 +27,16 @@ Iterator insert(List *ls, Iterator *i, char *data);
 Iterator delete(List *ls, Iterator *i);
 Iterator find(List *ls, char *data);
 Iterator push_back(List *ls, char *data);
+//Iterator get_by_index(List *ls, int ind);
+//int get_index_by_iterator(List *ls, Iterator *iter);
 
 List *list_create();
 void list_print(List *ls);
-//void list_add(List *ls, char *elem);
-//void list_remove(List *ls, char *elem);
 int list_function(List *ls, char *elem);
 int list_length(List *ls);
-//int list_find(List *ls, char *elem);
 void list_destroy(List *ls);
 char *get_data(Iterator *i);
+void print_connection(List *ls);
+void list_forceFirstElem(List *ls, char *data);
 
 #endif

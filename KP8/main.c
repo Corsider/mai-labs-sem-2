@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 void throw_error() {
     printf("\n");
@@ -66,6 +67,7 @@ int main(void)
                 printf("\nCreate root elem: ");
                 scanf("%s", c);
                 it = push_back(list, c);
+                list_forceFirstElem(list, c);
                 printf("Created.\n\n");
                 list_created = 1;
                 list_print(list);
@@ -79,7 +81,7 @@ int main(void)
                 Iterator dl = find(list, c);
                 if (dl.part != NULL) {
                     if (list_length(list) == 1) {
-                        list_destroy(list);
+                        //list_destroy(list);
                         printf("List was deleted.\n\n");
                         list_created = 0;
                     } else {
@@ -111,6 +113,11 @@ int main(void)
         } else if (atoi(c) == 5) {
             printf("\nBye-bye!\n\n");
             break;
+        } else if (atoi(c) == 0) {
+            //printf("Start is %s\n", list->start->str);
+            //printf("List end is %s\n", last(list).part->str);
+            //print_connection(list);
+            printf("%s", "No such option\n\n");
         } else {
             printf("%s", "No such option\n");
             printf("\n");

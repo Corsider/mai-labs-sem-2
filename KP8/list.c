@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 List *list_create() {
     List *l = (List *)malloc(sizeof(List));
@@ -36,6 +37,22 @@ Iterator prev(List *ls, Iterator *i) {
     return ii;
 }
 
+Iterator prevOLD3(List *ls, Iterator *i) {
+    Iterator res = first(ls);
+    while (strcmp(ls->start->next->str, i->part->str) != 0) {
+        res = next(&res);
+    }
+    return res;
+}
+
+Iterator prevOLD4(List *ls, Iterator *i) {
+    Iterator res;
+    for (Iterator j = first(ls); j.part != i->part; j = next(&j)) {
+        res = j;
+    }
+    return res;
+}
+
 
 
 Iterator first(List *ls) {
@@ -44,38 +61,30 @@ Iterator first(List *ls) {
 }
 
 Iterator end(List *ls) {
-    Iterator i;
-    i.part = ls->start;
-    return i;
-}
-
-Iterator pre_end(List *ls) {
-    Iterator i;
-    for (Iterator j = first(ls); j.part->next != ls->start; j = next(&j)) {
-        i = j;
-    }
+    Iterator i = first(ls);
+    //i.part = ls->start;
     return i;
 }
 
 Iterator last(List *ls) {
-    Iterator i;
-    for (Iterator j = first(ls); j.part != end(ls).part; j = next(&j)) {
-        i = j;
+    Iterator counter = first(ls);
+    Iterator res = first(ls);
+    counter = next(&counter);
+    //printf("[LAST]: next of first is %s\n", counter.part->str);
+    for (Iterator i = counter; i.part != end(ls).part; i = next(&i)) {
+        res = i;
     }
-    return i;
+    return res;
 }
-
-//char *get_data(Iterator *i) {
-//    return i->part->str;
-//}
 
 Iterator insert(List *ls, Iterator *i, char *data) {
     Iterator toPaste = {(struct Item *) malloc(sizeof(struct Item))};
     strcpy(toPaste.part->str, data);
     ls->size++;
-    if (i->part == NULL) {
+    if (ls->start == NULL) { //i->part
         ls->start = toPaste.part;
         ls->start->next = ls->start; //changed
+        //printf("[INSERT] added root elem, its next is %s\n", ls->start->next->str);
         return toPaste;
     } else {
         toPaste.part->next = i->part->next;
@@ -84,19 +93,34 @@ Iterator insert(List *ls, Iterator *i, char *data) {
     }
 }
 
+Iterator deleteOLD(List *ls, Iterator *i) {
+    if (i->part == ls->start) {
+        Iterator lst = last(ls);
+        Iterator fst = first(ls);
+        fst = next(&fst);
+        lst.part->next = fst.part;
+        free(i->part);
+        ls->size--;
+        Iterator res = {ls->start};
+        return res;
+    } else {
+        Iterator pre = prev(ls, i);
+        Iterator nxt = next(i);
+        pre.part->next = nxt.part;
+        free(i->part);
+        return pre;
+    }
+}
+
 Iterator delete(List *ls, Iterator *i) {
     if (i->part == ls->start) { // if deleting first elem
-        struct Item *t = {ls->start->next};
+        Iterator lst = last(ls);
+        lst.part->next = ls->start->next;
         free(i->part);
-        ls->start = t;
+        ls->start = lst.part->next;
         Iterator res = {ls->start};
+
         ls->size--;
-        //update ptrs to first elem from last ...
-        Iterator last = end(ls);
-        Iterator pre_last = prev(ls, &last);
-        //printf("Last elem needs adj ptrs. elem: %s\n", pre_last.part->str);
-        pre_last.part->next = res.part;
-        printf("updated. elem %s to elem %s\n", end(ls).part->str, first(ls).part->str);
         return res;
     } else {
         Iterator prv = prev(ls, i); // getting previous
@@ -114,6 +138,7 @@ Iterator push_back(List *ls, char *data) {
     if (ls->start == NULL) {
         ls->start = temp.part;
         ls->start->next = ls->start; //changed
+        //printf("[PUSH BACK] next of start is %s\n", ls->start->next->str);
         return temp;
     } else {
         temp.part->next = ls->start; //changed
@@ -123,38 +148,32 @@ Iterator push_back(List *ls, char *data) {
 }
 
 Iterator find(List *ls, char *data) {
-    Iterator result = {NULL};
-    //printf("start is %s\n", ls->start->str);
+    Iterator res = {NULL};
     if (!strcmp(ls->start->str, data)) {
-        return first(ls);
+        res = first(ls);
+        return res;
     }
-    Iterator ed = end(ls);
-    Iterator pre = prev(ls, &ed);
-    //Iterator pre = pre_end(ls);
-    //printf("pre-last elem is %s\n", pre.part->str);
-    //printf("Started comparing. first: %s last(pre): %s\n", first(ls).part->str, pre.part->str);
-    for (Iterator i = first(ls); i.part != pre.part; i = next(&i)) {
-        //printf("comparing %s and %s, flag %s ...\n", i.part->str, data, pre.part->str);
-        if (!strcmp(i.part->str, data)) {
-            result = i;
+    Iterator comp = first(ls);
+    for (int i = 0; i < ls->size; i++) {
+        comp = next(&comp);
+        if (!strcmp(comp.part->str, data)) {
+            res = comp;
             break;
         }
-        /*
-        int cont;
-        scanf("%d", &cont);
-        if (cont == 1) {
-            continue;
-        } else {
-            break;
-        }
-        */
     }
-    //check last elem
-    if (!strcmp(pre.part->str, data)) {
-        //printf("Here\n");
-        result = pre;
+    return res;
+}
+
+void print_connection(List *ls) {
+    printf("List length: %d\n", ls->size);
+    Iterator x = first(ls);
+    for (int i = 0; i < list_length(ls); i++) {
+        //Item it = x.part->next;
+        Iterator xn;
+        xn.part = x.part->next;
+        printf("Elem %s, it's next is %s\n", x.part->str, xn.part->str);
+        x = next(&x);
     }
-    return result;
 }
 
 void list_print(List *ls) {
@@ -167,13 +186,6 @@ void list_print(List *ls) {
     }
     
     printf("\n");
-}
-
-void lsp(List *ls, char *start) {
-    printf("%s ", ls->start->str);
-    if (ls->start->next->str != start) {
-        lsp(ls, start);
-    }
 }
 
 int list_function(List *ls, char *elem) {
@@ -193,6 +205,10 @@ int list_length(List *ls) {
     return ls->size;
 }
 
+void list_forceFirstElem(List *ls, char *data) {
+    Iterator f = first(ls);
+    strcpy(f.part->str, data);
+}
 
 void list_destroy(List *ls) {
     Iterator i = first(ls);
