@@ -25,9 +25,7 @@ int main(void)
         expr = expr->left;
     }
 
-    //expression_print(expr);
     tree_print(expr);
-    //expression_destroy(&expr);
 
     return EXIT_SUCCESS;
 }

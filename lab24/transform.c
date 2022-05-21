@@ -128,7 +128,6 @@ void transform4(Expression *expr)
     Token power = { .type = OPERATOR, .data = {.operator_name = '^'}};
     Token plus = { .type = OPERATOR, .data = {.operator_name = '+'}};
     Token minus = { .type = OPERATOR, .data = {.operator_name = '-'}};
-    //Token bracketl = { .type = BRACKET, .data = {.is_left_bracket = 1}};
     Token bracketr = { .type = BRACKET, .data = {.is_left_bracket = 0}};
     String str1;
     string_initialize(&str1);
@@ -140,8 +139,6 @@ void transform4(Expression *expr)
     Token b = { .type = VARIABLE, .data = { .variable_name = str2}};
     string_copy(&aaaa.data.variable_name, &(*expr)->left->left->data.data.variable_name);
     string_copy(&b.data.variable_name, &(*expr)->right->left->data.data.variable_name);
-    //token_copy(&aaaa, &(*expr)->left->left);
-    //token_copy(&b, &(*expr)->right->left);
     Token num2t = { .type = INTEGER, .data = { .value_int = 2}};
     Expression num2;
     Expression varA;
@@ -149,8 +146,6 @@ void transform4(Expression *expr)
     expression_create_terminal(&num2, &num2t);
     expression_create_terminal(&varA, &aaaa);
     expression_create_terminal(&varB, &b);
-    //num2->data.data.value_int = 2;
-    //expression_create_unary(&num2, &plus, )
     //creating a + b:
     expression_create_binary(&ex1, &plus, varA, varB);
     //creating (a + b):
@@ -167,27 +162,14 @@ void transform4(Expression *expr)
     expression_create_binary(&ex2, &plus, ex2, b2);
     //creating brackets for ex2:
     expression_create_unary(&ex2, &bracketr, ex2);
-    //ex1 and ex2 ready. Creating (a + b) * (a^2 - ab + b^2):
-    //expression_create_binary(&ex1, &mult, ex1, ex2); SKIP
-    //deleting old expression:
     (*expr)->data.data.operator_name = '*';
-    //Expression *tmp = (*expr)->left;
-    //printf("ex1\n");
-    //tree_print(ex1);
-    //printf("ex2\n");
-    //tree_print(ex2);
     (*expr)->left = NULL;
     (*expr)->right = NULL;
     expression_destroy(&((*expr)->left));
     expression_destroy(&((*expr)->right));
-    ////
     
     (*expr)->left = ex1; //(a +b)
     (*expr)->right = ex2; //(a^2 -ab + b^2)
-    //(*expr)->right = NULL;
-    //expression_destroy(&((*expr)->right));
-    //(*expr)->right = ex2;
-    //return TRANSORMATION_SUCCESS;
 }
 
 int match1(Expression *expr)
@@ -260,13 +242,8 @@ int expression_transform(Expression *expr)
         if (err) {
             return TRANSORMATION_ERROR;
         }
-        //if (match1(expr))
-        //    return transform1(expr);
-        //if (match2(expr))
-        //    return transform2(expr);
 
         if (match4(expr)) {
-            //printf("Found MATCH!\n");
             transform4(expr);
         }
         //        if(match3(expr))
