@@ -20,10 +20,10 @@ int string_initialize(String *string)
 
 int string_copy(String *to, String *from)
 {
-    to->cstring = (char *) malloc(from->length + 1);
+    to->cstring = (char *) malloc(from->length + 1); //+1
     if (to->cstring != NULL) {
         to->allocated = from->length;
-        strncpy(to->cstring, from->cstring, from->length + 1);
+        strncpy(to->cstring, from->cstring, from->length + 1); //+1
         to->length = from->length;
         return STRING_SUCCESS;
     } else {

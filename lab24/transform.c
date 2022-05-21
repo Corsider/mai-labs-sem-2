@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "printer.h"
 #include "transform.h"
@@ -129,32 +130,60 @@ int transform4(Expression *expr)
     Token minus = { .type = OPERATOR, .data = {.operator_name = '-'}};
     //Token bracketl = { .type = BRACKET, .data = {.is_left_bracket = 1}};
     Token bracketr = { .type = BRACKET, .data = {.is_left_bracket = 0}};
-    //Token num2 = { .type = INTEGER, .data = {.value_int = 2}};
-    Expression num2 = (*expr)->left->right;
-    num2->data.data.value_int = 2;
+    String str1;
+    string_initialize(&str1);
+    string_append(&str1, 'c');
+    String str2;
+    string_initialize(&str2);
+    string_append(&str2, 'v');
+    Token aaaa = { .type = VARIABLE, .data = { .variable_name = str1}};
+    Token b = { .type = VARIABLE, .data = { .variable_name = str2}};
+    string_copy(&aaaa.data.variable_name, &(*expr)->left->left->data.data.variable_name);
+    string_copy(&b.data.variable_name, &(*expr)->right->left->data.data.variable_name);
+    //token_copy(&aaaa, &(*expr)->left->left);
+    //token_copy(&b, &(*expr)->right->left);
+    Token num2t = { .type = INTEGER, .data = { .value_int = 2}};
+    Expression num2;
+    Expression varA;
+    Expression varB;
+    expression_create_terminal(&num2, &num2t);
+    expression_create_terminal(&varA, &aaaa);
+    expression_create_terminal(&varB, &b);
+    //num2->data.data.value_int = 2;
     //expression_create_unary(&num2, &plus, )
     //creating a + b:
-    expression_create_binary(&ex1, &plus, (*expr)->left->left, (*expr)->right->left);
+    expression_create_binary(&ex1, &plus, varA, varB);
     //creating (a + b):
     expression_create_unary(&ex1, &bracketr, ex1);
     //creating a^2:
-    expression_create_binary(&ex2, &power, (*expr)->left->left, num2);
+    expression_create_binary(&ex2, &power, varA, num2);
     //creating a*b:
-    expression_create_binary(&ab, &mult, (*expr)->left->left, (*expr)->right->left);
+    expression_create_binary(&ab, &mult, varA, varB);
     //creating a^2 - a*b:
     expression_create_binary(&ex2, &minus, ex2, ab);
     //creating b^2:
-    expression_create_binary(&b2, &power, (*expr)->right->left, num2);
+    expression_create_binary(&b2, &power, varB, num2);
     //creating a^2 - a*b + b^2:
     expression_create_binary(&ex2, &plus, ex2, b2);
+    //creating brackets for ex2:
+    expression_create_unary(&ex2, &bracketr, ex2);
     //ex1 and ex2 ready. Creating (a + b) * (a^2 - ab + b^2):
     //expression_create_binary(&ex1, &mult, ex1, ex2); SKIP
     //deleting old expression:
     (*expr)->data.data.operator_name = '*';
     //Expression *tmp = (*expr)->left;
+    //printf("ex1\n");
+    //tree_print(ex1);
+    //printf("ex2\n");
+    //tree_print(ex2);
     (*expr)->left = NULL;
+    (*expr)->right = NULL;
     expression_destroy(&((*expr)->left));
-    (*expr)->left = ex1;
+    expression_destroy(&((*expr)->right));
+    ////
+    
+    (*expr)->left = ex1; //(a +b)
+    (*expr)->right = ex2; //(a^2 -ab + b^2)
     //(*expr)->right = NULL;
     //expression_destroy(&((*expr)->right));
     //(*expr)->right = ex2;
