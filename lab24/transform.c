@@ -118,7 +118,7 @@ int transform3(Expression *expr)
     return TRANSORMATION_SUCCESS;
 }
 
-int transform4(Expression *expr)
+void transform4(Expression *expr)
 {
     Expression ex1;
     Expression ex2;
@@ -187,7 +187,7 @@ int transform4(Expression *expr)
     //(*expr)->right = NULL;
     //expression_destroy(&((*expr)->right));
     //(*expr)->right = ex2;
-    return TRANSORMATION_SUCCESS;
+    //return TRANSORMATION_SUCCESS;
 }
 
 int match1(Expression *expr)
@@ -232,21 +232,10 @@ int match_61(Expression *expr) //a^3 + b^3 = (a+b)*(a^2 -a*b + b^2)
             && ((*expr)->right->right->right->right->right->data.type == INTEGER)
             && ((*expr)->right->right->right->right->right->data.data.value_int == 3);
 }
-/*
+
 int match4(Expression *expr)
 {
     return (*expr != NULL) && ((*expr)->data.type == OPERATOR)
-        && ((*expr)->data.data.operator_name == '^')
-        && ((*expr)->left->data.type == VARIABLE)
-        && ((*expr)->right->data.type == INTEGER)
-        && ((*expr)->right->data.data.value_int == 3);
-        //&& ((*expr)->left->left->data.type == OPERATOR)
-        //&& ((*expr)->left->left->data.data.operator_name == '+');
-}
-*/
-int match4(Expression *expr)
-{
-    return (*expr != NULL) && (((*expr)->data.type == OPERATOR))
             && ((*expr)->data.data.operator_name == '+')
             && ((*expr)->left->data.type == OPERATOR)
             && ((*expr)->left->data.data.operator_name == '^')
@@ -278,7 +267,7 @@ int expression_transform(Expression *expr)
 
         if (match4(expr)) {
             //printf("Found MATCH!\n");
-            return transform4(expr);
+            transform4(expr);
         }
         //        if(match3(expr))
         //            return transform3(expr);
